@@ -15,7 +15,7 @@
 r"""
 RemBERT Encoder
 ===============
-    Pretrained RemBERT encoder from Google. This encoder is similar to BERT but uses 
+    Pretrained RemBERT encoder from Google. This encoder is similar to BERT but uses
     sentencepiece like XLMR.
 """
 from transformers import RemBertConfig, RemBertModel, RemBertTokenizerFast
@@ -85,7 +85,7 @@ class RemBERTEncoder(XLMREncoder):
             pretrained_model, load_pretrained_weights, local_files_only
         )
 
-    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1 = None):
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
         cls = [self.tokenizer.cls_token_id]
         sep = [self.tokenizer.sep_token_id]
         if token_ids_1 is None:

@@ -15,7 +15,7 @@
 r"""
 MiniLM Encoder
 ==============
-    Pretrained MiniLM encoder from Microsoft. This encoder uses a BERT 
+    Pretrained MiniLM encoder from Microsoft. This encoder uses a BERT
     architecture with an XLMR tokenizer.
 """
 from transformers import BertConfig, BertModel, XLMRobertaTokenizerFast
@@ -76,7 +76,7 @@ class MiniLMEncoder(XLMREncoder):
             pretrained_model, load_pretrained_weights, local_files_only
         )
 
-    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1 = None):
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
         cls = [self.tokenizer.cls_token_id]
         sep = [self.tokenizer.sep_token_id]
 

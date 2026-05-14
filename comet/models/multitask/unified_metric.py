@@ -16,10 +16,10 @@
 r"""
 Unified Metric
 ==============
-    Unified Metric is a multitask metric that performs word-level and segment-level 
-    evaluation in a multitask manner. It can also be used with and without reference 
+    Unified Metric is a multitask metric that performs word-level and segment-level
+    evaluation in a multitask manner. It can also be used with and without reference
     translations.
-    
+
     Inspired on [UniTE](https://arxiv.org/pdf/2204.13346.pdf)
 """
 from collections import OrderedDict
@@ -475,8 +475,8 @@ class UnifiedMetric(CometModel):
             raise Exception(
                 "Invalid model sent layer {}.".format(self.hparams.word_layer)
             )
-        sentemb = embeddings[:, 0, :] # We take the CLS token as sentence-embedding
-        
+        sentemb = embeddings[:, 0, :]  # We take the CLS token as sentence-embedding
+
         if self.word_level:
             sentence_output = self.estimator(sentemb)
             word_output = self.hidden2tag(wordemb)

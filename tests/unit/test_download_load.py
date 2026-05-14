@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import unittest
 import os
 import shutil
-from tests.data import DATA_PATH
+import unittest
+
 from comet import download_model
 from comet.models import load_from_checkpoint
+from tests.data import DATA_PATH
 
 
 class TestDownloadModel(unittest.TestCase):

@@ -42,7 +42,7 @@ from pytorch_lightning.trainer.trainer import Trainer
 from comet.models import (RankingMetric, ReferencelessRegression,
                           RegressionMetric, UnifiedMetric)
 
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision("high")
 
 logger = logging.getLogger(__name__)
 

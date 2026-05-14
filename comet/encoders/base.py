@@ -277,7 +277,7 @@ class Encoder(nn.Module, metaclass=abc.ABCMeta):
                 concatenated into a single input.
         """
         concat_input_ids = []
-        
+
         # Remove padding before concatenation
         for encoder_input in inputs:
             input_ids = encoder_input["input_ids"]

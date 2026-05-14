@@ -13,8 +13,8 @@
 # limitations under the License.
 from .bert import BERTEncoder
 from .minilm import MiniLMEncoder
-from .xlmr import XLMREncoder
 from .rembert import RemBERTEncoder
+from .xlmr import XLMREncoder
 from .xlmr_xl import XLMRXLEncoder
 
 str2encoder = {

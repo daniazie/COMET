@@ -2,12 +2,12 @@
 import unittest
 
 import torch
+from pytorch_lightning import seed_everything
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from torch import nn
 
 from comet.modules.feedforward import FeedForward
-from pytorch_lightning import seed_everything
 
 
 class TestFeedForward(unittest.TestCase):

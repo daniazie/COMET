@@ -28,7 +28,8 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import pytorch_lightning as ptl
 import torch
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, Subset
+from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
+                              Subset)
 
 from comet.encoders import str2encoder
 from comet.modules import LayerwiseAttention
@@ -37,13 +38,8 @@ from .lru_cache import tensor_lru_cache
 from .pooling_utils import average_pooling, max_pooling
 from .predict_pbar import PredictProgressBar
 from .predict_writer import CustomWriter
-from .utils import (
-    OrderedSampler,
-    Prediction,
-    Target,
-    flatten_metadata,
-    restore_list_order,
-)
+from .utils import (OrderedSampler, Prediction, Target, flatten_metadata,
+                    restore_list_order)
 
 if "COMET_EMBEDDINGS_CACHE" in os.environ:
     CACHE_SIZE = int(os.environ["COMET_EMBEDDINGS_CACHE"])
@@ -162,7 +158,9 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
     def enable_context(self):
         """Function that extends COMET to use preceding context as described in
         https://statmt.org/wmt22/pdf/2022.wmt-1.6.pdf."""
-        logger.warning("Context should only be enabled for RegressionMetric with Average Pooling.")
+        logger.warning(
+            "Context should only be enabled for RegressionMetric with Average Pooling."
+        )
 
     @abc.abstractmethod
     def read_training_data(self) -> List[dict]:
@@ -352,7 +350,7 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
                 embeddings,
                 attention_mask,
                 self.encoder.tokenizer.pad_token_id,
-                self.encoder.tokenizer.sep_token_id, 
+                self.encoder.tokenizer.sep_token_id,
                 self.use_context,
             )
 
@@ -593,7 +591,7 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
             )
         elif gpus > 0:
             devices = gpus
-        else: # gpu = 0
+        else:  # gpu = 0
             devices = "auto"
 
         sampler = SequentialSampler(samples)
@@ -622,7 +620,9 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
             sampler=sampler,
             collate_fn=self.prepare_for_inference,
             num_workers=num_workers,
-            multiprocessing_context="fork" if torch.backends.mps.is_available() else None,
+            multiprocessing_context=(
+                "fork" if torch.backends.mps.is_available() else None
+            ),
         )
         if gpus > 1:
             pred_writer = CustomWriter()

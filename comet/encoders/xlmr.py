@@ -20,7 +20,8 @@ XLM-RoBERTa Encoder
 from typing import Dict
 
 import torch
-from transformers import XLMRobertaConfig, XLMRobertaModel, XLMRobertaTokenizerFast
+from transformers import (XLMRobertaConfig, XLMRobertaModel,
+                          XLMRobertaTokenizerFast)
 
 from comet.encoders.base import Encoder
 from comet.encoders.bert import BERTEncoder
@@ -106,7 +107,7 @@ class XLMREncoder(BERTEncoder):
             "attention_mask": attention_mask,
         }
 
-    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1 = None):
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
         cls = [self.tokenizer.cls_token_id]
         sep = [self.tokenizer.sep_token_id]
 

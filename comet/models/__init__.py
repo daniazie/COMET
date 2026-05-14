@@ -22,13 +22,12 @@ import yaml
 from huggingface_hub import snapshot_download
 
 from .base import CometModel
+from .download_utils import download_model_legacy
 from .multitask.unified_metric import UnifiedMetric
 from .multitask.xcomet_metric import XCOMETMetric
 from .ranking.ranking_metric import RankingMetric
 from .regression.referenceless import ReferencelessRegression
 from .regression.regression_metric import RegressionMetric
-from .download_utils import download_model_legacy
-
 
 str2model = {
     "referenceless_regression_metric": ReferencelessRegression,
@@ -93,15 +92,20 @@ def load_from_checkpoint(
             hparams = yaml.load(yaml_file.read(), Loader=yaml.FullLoader)
 
         model_class = str2model[hparams["class_identifier"]]
-        
+
         # Check comet version and hparams for layer_transformation
         # This is a workaround for the bug reported in version 2.2.4
         # issue number #244
         try:
-            import pkg_resources
-            comet_version = pkg_resources.get_distribution("unbabel-comet").version
-            use_softmax = (pkg_resources.parse_version(comet_version) >= pkg_resources.parse_version("2.2.4") and 
-                          hparams.get("layer_transformation") == "sparsemax_patch")
+            from importlib import metadata
+
+            from packaging.version import Version as parse_version
+
+            comet_version = metadata.distribution("unbabel-comet").version
+            use_softmax = (
+                parse_version(comet_version) >= parse_version("2.2.4")
+                and hparams.get("layer_transformation") == "sparsemax_patch"
+            )
         except:
             use_softmax = False
 
@@ -116,7 +120,7 @@ def load_from_checkpoint(
         }
         if use_softmax:
             kwargs["layer_transformation"] = "softmax"
-        
+
         model = model_class.load_from_checkpoint(**kwargs)
         return model
     else:
