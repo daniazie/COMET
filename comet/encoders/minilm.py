@@ -75,3 +75,11 @@ class MiniLMEncoder(XLMREncoder):
         return MiniLMEncoder(
             pretrained_model, load_pretrained_weights, local_files_only
         )
+
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1 = None):
+        cls = [self.tokenizer.cls_token_id]
+        sep = [self.tokenizer.sep_token_id]
+
+        if token_ids_1 is None:
+            return cls + token_ids_0 + sep
+        return cls + token_ids_0 + sep + sep + token_ids_1 + sep

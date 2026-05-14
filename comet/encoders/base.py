@@ -277,6 +277,7 @@ class Encoder(nn.Module, metaclass=abc.ABCMeta):
                 concatenated into a single input.
         """
         concat_input_ids = []
+        
         # Remove padding before concatenation
         for encoder_input in inputs:
             input_ids = encoder_input["input_ids"]
@@ -295,7 +296,7 @@ class Encoder(nn.Module, metaclass=abc.ABCMeta):
             # because that method adds them again
             lengths = tuple(len(x[i][1:-1]) for x in concat_input_ids)
 
-            # self.max_positions = 512 but we need to remove 4 aditional tokens
+            # self.max_positions = 512 but we need to remove 4 additional tokens
             # [CLS]...[SEP]...[SEP]...[SEP]
             special_tokens = 1 + len(inputs) * self.size_separator
             new_sequence = concat_input_ids[0][i]
@@ -304,7 +305,7 @@ class Encoder(nn.Module, metaclass=abc.ABCMeta):
                 torch.zeros(len(new_sequence[1:-1]) + 2, dtype=torch.int)
             )
             for j in range(1, len(inputs)):
-                new_sequence = self.tokenizer.build_inputs_with_special_tokens(
+                new_sequence = self.build_inputs_with_special_tokens(
                     new_sequence[1:-1], concat_input_ids[j][i][1:-1]
                 )
             if sum(lengths) > self.max_positions - special_tokens:
@@ -341,3 +342,10 @@ class Encoder(nn.Module, metaclass=abc.ABCMeta):
             encoder_input["token_type_ids"] = token_type_ids
 
         return encoder_input, lengths, max_len
+
+    def build_inputs_with_special_tokens(
+        self, token_ids_0: list[int], token_ids_1: Optional[list[int]] = None
+    ) -> list[int]:
+        if token_ids_1 is None:
+            return token_ids_0
+        return token_ids_0 + token_ids_1

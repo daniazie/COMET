@@ -92,15 +92,24 @@ class XLMREncoder(BERTEncoder):
     def forward(
         self, input_ids: torch.Tensor, attention_mask: torch.Tensor, **kwargs
     ) -> Dict[str, torch.Tensor]:
-        last_hidden_states, _, all_layers = self.model(
+        last_hidden_states, all_layers = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
             output_hidden_states=True,
             return_dict=False,
         )
+
         return {
             "sentemb": last_hidden_states[:, 0, :],
             "wordemb": last_hidden_states,
             "all_layers": all_layers,
             "attention_mask": attention_mask,
         }
+
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1 = None):
+        cls = [self.tokenizer.cls_token_id]
+        sep = [self.tokenizer.sep_token_id]
+
+        if token_ids_1 is None:
+            return cls + token_ids_0 + sep
+        return cls + token_ids_0 + sep + sep + token_ids_1 + sep
