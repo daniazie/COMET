@@ -98,12 +98,11 @@ def load_from_checkpoint(
         # issue number #244
         try:
             from importlib import metadata
-
-            from packaging.version import Version as parse_version
+            import packaging.version as parse_version
 
             comet_version = metadata.distribution("unbabel-comet").version
             use_softmax = (
-                parse_version(comet_version) >= parse_version("2.2.4")
+                parse_version.parse(comet_version) >= parse_version.parse("2.2.4")
                 and hparams.get("layer_transformation") == "sparsemax_patch"
             )
         except:

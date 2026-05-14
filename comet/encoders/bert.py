@@ -20,7 +20,16 @@ BERT Encoder
 from typing import Dict, Optional
 
 import torch
-from transformers import BertConfig, BertModel, BertTokenizerFast
+from transformers import BertConfig, BertModel
+
+import importlib_metadata
+import packaging.version as packaging_version
+
+transformers_version = importlib_metadata.distribution("transformers").version
+if packaging_version.Version(transformers_version) >= packaging_version.Version("v5.0.0rc0"):
+    from transformers import BertTokenizer as BertTokenizer
+else:
+    from transformers import BertTokenizerFast as BertTokenizer
 
 from comet.encoders.base import Encoder
 
@@ -42,19 +51,19 @@ class BERTEncoder(Encoder):
         local_files_only: bool = False,
     ) -> None:
         super().__init__()
-        self.tokenizer = BertTokenizerFast.from_pretrained(
+        self.tokenizer = BertTokenizer.from_pretrained(
             pretrained_model, use_fast=True, local_files_only=local_files_only
         )
         if load_pretrained_weights:
             self.model = BertModel.from_pretrained(
-                pretrained_model, add_pooling_layer=False
+                pretrained_model, add_pooling_layer=True
             )
         else:
             self.model = BertModel(
                 BertConfig.from_pretrained(
                     pretrained_model, local_files_only=local_files_only
                 ),
-                add_pooling_layer=False,
+                add_pooling_layer=True,
             )
         self.model.encoder.output_hidden_states = True
 
@@ -168,13 +177,17 @@ class BERTEncoder(Encoder):
             Dict[str, torch.Tensor]: dictionary with 'sentemb', 'wordemb', 'all_layers'
                 and 'attention_mask'.
         """
-        last_hidden_states, pooler_output, all_layers = self.model(
+        output = self.model(
             input_ids=input_ids,
             token_type_ids=token_type_ids,
             attention_mask=attention_mask,
             output_hidden_states=True,
             return_dict=False,
         )
+        if len(output) == 3:
+            last_hidden_states, pooler_output, all_layers = output
+        else:
+            last_hidden_states, all_layers = output
         return {
             "sentemb": pooler_output,
             "wordemb": last_hidden_states,

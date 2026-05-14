@@ -18,7 +18,15 @@ RemBERT Encoder
     Pretrained RemBERT encoder from Google. This encoder is similar to BERT but uses
     sentencepiece like XLMR.
 """
-from transformers import RemBertConfig, RemBertModel, RemBertTokenizerFast
+from transformers import RemBertConfig, RemBertModel
+import importlib_metadata
+import packaging.version as packaging_version
+
+transformers_version = importlib_metadata.distribution("transformers").version
+if packaging_version.Version(transformers_version) >= packaging_version.Version("v5.0.0rc0"):
+    from transformers import RemBertTokenizer as RemBertTokenizer
+else:
+    from transformers import RemBertTokenizerFast as RemBertTokenizer
 
 from comet.encoders.xlmr import Encoder, XLMREncoder
 
@@ -40,7 +48,7 @@ class RemBERTEncoder(XLMREncoder):
         local_files_only: bool = False,
     ) -> None:
         super(Encoder, self).__init__()
-        self.tokenizer = RemBertTokenizerFast.from_pretrained(
+        self.tokenizer = RemBertTokenizer.from_pretrained(
             pretrained_model, use_fast=True, local_files_only=local_files_only
         )
         if load_pretrained_weights:

@@ -20,8 +20,19 @@ XLM-RoBERTa Encoder
 from typing import Dict
 
 import torch
-from transformers import (XLMRobertaConfig, XLMRobertaModel,
-                          XLMRobertaTokenizerFast)
+import importlib_metadata
+import packaging.version as packaging_version
+
+from transformers import (
+    XLMRobertaConfig,
+    XLMRobertaModel
+)
+
+transformers_version = importlib_metadata.distribution("transformers").version
+if packaging_version.parse(transformers_version) >= packaging_version.parse("v5.0.0rc0"):
+    from transformers import XLMRobertaTokenizer as XLMRobertaTokenizer
+else:
+    from transformers import XLMRobertaTokenizerFast as XLMRobertaTokenizer
 
 from comet.encoders.base import Encoder
 from comet.encoders.bert import BERTEncoder
@@ -44,7 +55,7 @@ class XLMREncoder(BERTEncoder):
         local_files_only: bool = False,
     ) -> None:
         super(Encoder, self).__init__()
-        self.tokenizer = XLMRobertaTokenizerFast.from_pretrained(
+        self.tokenizer = XLMRobertaTokenizer.from_pretrained(
             pretrained_model, local_files_only=local_files_only
         )
         if load_pretrained_weights:
@@ -93,12 +104,17 @@ class XLMREncoder(BERTEncoder):
     def forward(
         self, input_ids: torch.Tensor, attention_mask: torch.Tensor, **kwargs
     ) -> Dict[str, torch.Tensor]:
-        last_hidden_states, all_layers = self.model(
+        output = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
             output_hidden_states=True,
             return_dict=False,
         )
+
+        if len(output) == 2:
+            last_hidden_states, all_layers = output
+        else:
+            last_hidden_states, _, all_layers = output
 
         return {
             "sentemb": last_hidden_states[:, 0, :],
