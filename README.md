@@ -17,11 +17,6 @@ Please check all available models [here](https://github.com/Unbabel/COMET/blob/m
  
 # Quick Installation
 
-> For this particular repo:
-```bash
-    pip install https://github.com/daniazie/COMET.git
-```
-
 COMET requires python 3.8 or above. Simple installation from PyPI
 
 ```bash

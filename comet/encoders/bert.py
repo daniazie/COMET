@@ -184,10 +184,9 @@ class BERTEncoder(Encoder):
             output_hidden_states=True,
             return_dict=False,
         )
-        if len(output) == 3:
-            last_hidden_states, pooler_output, all_layers = output
-        else:
-            last_hidden_states, all_layers = output
+        
+        last_hidden_states, pooler_output, all_layers = output
+        
         return {
             "sentemb": pooler_output,
             "wordemb": last_hidden_states,
